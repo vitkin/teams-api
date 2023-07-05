@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.http.HttpClient;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,33 +19,38 @@ import java.util.List;
 public class TeamsClient {
 
   /**
-   * 
+   *
    * @param args
-   * @throws Exception 
+   * @throws Exception
    */
   public static void main(String... args) throws Exception {
 
     // new SkypeToken();
-    
     var client = new TeamsClient();
+
+    //  var channels = client.getPinnedChannels();
+    //  System.out.println(channels);
     
-    var channels = client.getPinnedChannels();
-    
-    System.out.println(channels);
+    var conversations = client.getConversations();
+
+    System.out.println(conversations);
   }
 
-  /** */
+  /**
+   *    */
   HttpClient httpClient;
 
-  /** */
+  /**
+   *    */
   CsaSvc chatSvc;
 
-  /** */
+  /**
+   *    */
   MtService mtSvc;
 
   /**
-   * 
-   * @throws Exception 
+   *
+   * @throws Exception
    */
   public TeamsClient() throws Exception {
 
@@ -57,32 +61,31 @@ public class TeamsClient {
 
     // Initialize Chat Service
     chatSvc = new CsaSvc(chatSvcToken, skypeToken);
-    
+
     // Initialize MT Service
     mtSvc = new MtService("emea", skypeSpaces);
   }
 
   /**
-   * 
-   * @param debugFlag 
+   *
+   * @param debugFlag
    */
   public void debug(boolean debugFlag) {
     chatSvc.debugSave(debugFlag);
   }
 
   /**
-   * 
-   * @return 
+   *
+   * @return
    */
   public CsaSvc chatSvc() {
     return chatSvc;
   }
 
   /**
-   * 
-   * @return
-   * @throws IOException
-   * @throws InterruptedException 
+   *
+   * @return @throws IOException
+   * @throws InterruptedException
    */
   ConversationResponse getConversations() throws IOException, InterruptedException {
 
@@ -90,11 +93,11 @@ public class TeamsClient {
   }
 
   /**
-   * 
+   *
    * @param channel
    * @return
    * @throws IOException
-   * @throws InterruptedException 
+   * @throws InterruptedException
    */
   List<ChatMessage> getMessages(Channel channel) throws IOException, InterruptedException {
 
@@ -102,12 +105,11 @@ public class TeamsClient {
   }
 
   /**
-   * 
-   * @return
-   * @throws ParseException
+   *
+   * @return @throws ParseException
    * @throws IOException
    * @throws UnsupportedEncodingException
-   * @throws InterruptedException 
+   * @throws InterruptedException
    */
   User getMe() throws ParseException, IOException, UnsupportedEncodingException, InterruptedException {
 
@@ -115,11 +117,11 @@ public class TeamsClient {
   }
 
   /**
-   * 
+   *
    * @param mris
    * @return
    * @throws IOException
-   * @throws InterruptedException 
+   * @throws InterruptedException
    */
   List<User> fetchShortProfile(String... mris) throws IOException, InterruptedException {
 
@@ -127,8 +129,8 @@ public class TeamsClient {
   }
 
   /**
-   * 
-   * @return 
+   *
+   * @return
    */
   List<Tenant> getTenants() {
 
@@ -136,12 +138,11 @@ public class TeamsClient {
   }
 
   /**
-   * 
-   * @return
-   * @throws IOException
-   * @throws InterruptedException 
+   *
+   * @return @throws IOException
+   * @throws InterruptedException
    */
-  ArrayList<String> getPinnedChannels() throws IOException, InterruptedException {
+  List<String> getPinnedChannels() throws IOException, InterruptedException {
 
     return chatSvc.getPinnedChannels();
   }

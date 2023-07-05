@@ -3,43 +3,33 @@ package io.github.vitkin.teams.api.csa;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.json.bind.annotation.JsonbCreator;
 
 /**
  *
  */
 public class Messages {
 
-  static final String ChatMessageTypeMessage = "Message";
-  static final String EvenCall = "Event/Call";
-  static final String ThreadActivityAddMember = "ThreadActivity/AddMember";
+  static final String CHAT_MESSAGE_TYPE_MESSAGE = "Message";
+  static final String EVENT_CALL = "Event/Call";
+  static final String THREAD_ACTIVITY_ADD_MEMBER = "ThreadActivity/AddMember";
 
   public static record UserEmotion(
     String mri,
-    double time, // TODO: Convert to time.time ?
+    long time, // TODO: Convert to time.time ?
     String value) {
 
-    @JsonbCreator
-    public UserEmotion   {
-    }
   }
 
   public static record Emotion(
     String key,
     List<UserEmotion> users) {
 
-    @JsonbCreator
-    public Emotion  {
-    }
   }
 
   public static record DeltaEmotion(
     String key,
     List<UserEmotion> users) {
 
-    @JsonbCreator
-    public DeltaEmotion  {
-    }
   }
 
   public static record ChatMessageProperties(
@@ -50,15 +40,15 @@ public class Messages {
     String files,
     List<Emotion> emotions,
     List<DeltaEmotion> deltaEmotions,
-    double deleteTime, // TODO: Convert to time.Time ?
+    long deleteTime, // TODO: Convert to time.Time ?
     boolean adminDelete,
     String s2SPartnerName,
     String mentions,
     String links,
-    Object editTime,// Can be either String or double, wtf? TODO: Convert to time.Time ?
-    double counterPartyMessageId,
-    double originContextId,
-    double parentMessageId,
+    Object editTime,// Can be either String or long, wtf? TODO: Convert to time.Time ?
+    long counterPartyMessageId,
+    long originContextId,
+    long parentMessageId,
     Object skipFanOutToBots,// Can be either String or boolean, wtf?
     String cards,
     String importance,
@@ -67,24 +57,18 @@ public class Messages {
     String meeting,
     String skypeGuid) {
 
-    @JsonbCreator
-    public ChatMessageProperties                       {
-    }
   }
 
   public static record AnnotationsSummary(
-    Map<String, Double> emotions) {
+    Map<String, Long> emotions) {
 
-    @JsonbCreator
-    public AnnotationsSummary {
-    }
   }
 
   public static record ChatMessage(
     String id,
-    double sequenceId,
+    long sequenceId,
     String skypeEditedId,
-    int skypeEditOffset,
+    long skypeEditOffset,
     String clientMessageId,
     String version,
     String conversationId,
@@ -102,21 +86,15 @@ public class Messages {
     ChatMessageProperties properties,
     AnnotationsSummary annotationsSummary) {
 
-    @JsonbCreator
-    public ChatMessage                    {
-    }
   }
 
   public static record MessagesMetadata(
     String backwardLink,
     String syncState,
-    double lastCompleteSegmentStartTime, // TODO: Parse as time.Time
-    double lastCompleteSegmentEndTime // TODO: Parse as time.Time
+    long lastCompleteSegmentStartTime, // TODO: Parse as time.Time
+    long lastCompleteSegmentEndTime // TODO: Parse as time.Time
     ) {
 
-    @JsonbCreator
-    public MessagesMetadata    {
-    }
   }
 
   public static record MessagesResponse(
@@ -124,9 +102,6 @@ public class Messages {
     MessagesMetadata metadata //`json:"_metadata"`
     ) {
 
-    @JsonbCreator
-    public MessagesResponse  {
-    }
   }
 
 }

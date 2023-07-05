@@ -4,7 +4,6 @@ import io.github.vitkin.teams.api.TeamsToken;
 import io.github.vitkin.teams.api.models.Models;
 import java.text.ParseException;
 import java.util.List;
-import javax.json.bind.annotation.JsonbCreator;
 
 /**
  *
@@ -33,14 +32,12 @@ public class User {
   }
 
   /**
-   *    */
+   *
+   */
   public static record UsersResponse(
     List<Models.User> value, //`json:"value"`
     String type //`json:"type"`
     ) {
 
-    @JsonbCreator
-    public UsersResponse  {
-    }
   }
 }

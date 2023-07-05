@@ -1,8 +1,8 @@
 package io.github.vitkin.teams.api.csa;
 
-import java.time.LocalDate;
+//import java.time.Date;
+import java.time.OffsetDateTime;
 import java.util.List;
-import javax.json.bind.annotation.JsonbCreator;
 
 /**
  *
@@ -11,9 +11,6 @@ public class Teams {
 
   public static record User() {
 
-    @JsonbCreator
-    public User {
-    }
   }
 
   public static record FeedProperty(
@@ -21,33 +18,24 @@ public class Teams {
     String consumptionHorizon,
     String consumptionHorizonBookmark) {
 
-    @JsonbCreator
-    public FeedProperty   {
-    }
   }
 
   public static record PrivateFeed(
     String id,
     String type,
-    int version,
+    long version,
     FeedProperty properties,
     Message lastMessage,
     String messages,
     String targetLink,
     String streamType) {
 
-    @JsonbCreator
-    public PrivateFeed        {
-    }
   }
 
   public static record ConversationMetadata(
     String syncToken,
     boolean isPartialData) {
 
-    @JsonbCreator
-    public ConversationMetadata  {
-    }
   }
 
   public static record ChatMember(
@@ -58,47 +46,32 @@ public class Teams {
     String tenantId,
     String objectId) {
 
-    @JsonbCreator
-    public ChatMember      {
-    }
   }
 
   public static record DateRange(
-    LocalDate startDate,
-    LocalDate endDate) {
+    OffsetDateTime startDate,
+    OffsetDateTime endDate) {
 
-    @JsonbCreator
-    public DateRange  {
-    }
   }
 
   public static record WeeklyRecurrence(
-    int interval,
-    List<Integer> daysOfTheWeek) {
+    long longerval,
+    List<Long> daysOfTheWeek) {
 
-    @JsonbCreator
-    public WeeklyRecurrence  {
-    }
   }
 
   public static record MonthlyRecurrence(
-    int interval,
-    int weekOfTheMonthIndex,
-    int dayOfTheWeek) {
+    long longerval,
+    long weekOfTheMonthIndex,
+    long dayOfTheWeek) {
 
-    @JsonbCreator
-    public MonthlyRecurrence   {
-    }
   }
 
   public static record RecurrencePattern(
-    int patternType,
+    long patternType,
     WeeklyRecurrence weekly,
     MonthlyRecurrence relativeMonthly) {
 
-    @JsonbCreator
-    public RecurrencePattern   {
-    }
   }
 
   public static record MeetingInfo(
@@ -111,29 +84,26 @@ public class Teams {
     boolean isCancelled,
     DateRange eventRecurrenceRange,
     RecurrencePattern eventRecurrencePattern,
-    int appointmentType,
-    int meetingType,
+    long appolongmentType,
+    long meetingType,
     String scenario,
     String tenantId //`json:"tenantId"`
     ) {
 
-    @JsonbCreator
-    public MeetingInfo             {
-    }
   }
 
   public static record Chat(
-    int chatSubType, //`json:"chatSubType"`
+    long chatSubType, //`json:"chatSubType"`
     String chatType, //`json:"chatType"`
     ConsumptionHorizon consumptionHorizon, //`json:"consumptionHorizon"`
-    int conversationBlockedAt, //`json:"conversationBlockedAt"`
+    long conversationBlockedAt, //`json:"conversationBlockedAt"`
     String createdAt, //`json:"createdAt"`
     String creator, //`json:"creator"`
     boolean hasTranscript, //`json:"hasTranscript"`
     boolean hidden, //`json:"hidden"`
     String id, //`json:"id"`
-    String interopConversationStatus, //`json:"interopConversationStatus"`
-    int interopType, //`json:"interopType"`
+    String longeropConversationStatus, //`json:"longeropConversationStatus"`
+    long longeropType, //`json:"longeropType"`
     boolean isDisabled, //`json:"isDisabled"`
     boolean isGapDetectionEnabled, //`json:"isGapDetectionEnabled"`
     boolean isHighImportance, //`json:"isHighImportance"`
@@ -143,8 +113,8 @@ public class Teams {
     boolean isRead, //`json:"isRead"`
     boolean isSticky, //`json:"isSticky"`
     boolean isShared, //`json:"isShared"`
-    LocalDate lastJoinAt, //`json:"lastJoinAt"`
-    LocalDate lastLeaveAt, //`json:"lastLeaveAt"`
+    OffsetDateTime lastJoinAt, //`json:"lastJoinAt"`
+    OffsetDateTime lastLeaveAt, //`json:"lastLeaveAt"`
     Message lastMessage, //`json:"lastMessage"`
     MeetingInfo meetingInformation, //`json:"meetingInformation"`
     String meetingPolicy, //`json:"meetingPolicy"`
@@ -154,16 +124,13 @@ public class Teams {
     String shareHistoryFromTime, //`json:"shareHistoryFromTime"`
     List<Tab> tabs, //`json:"tabs"`
     String tenantId, //`json:"tenantId"`
-    int threadVersion, //`json:"threadVersion"`
+    long threadVersion, //`json:"threadVersion"`
     String threadSchemaVersion, //`json:"threadSchemaVersion,omitempty"`
     String title, //`json:"title"`
     ConsumptionHorizon userConsumptionHorizon, //`json:"userConsumptionHorizon"`
-    int version//`json:"version"`
+    long version//`json:"version"`
     ) {
 
-    @JsonbCreator
-    public Chat                                    {
-    }
   }
 
   public static record ConversationResponse(
@@ -173,43 +140,28 @@ public class Teams {
     List<Team> teams,
     List<User> users) {
 
-    @JsonbCreator
-    public ConversationResponse     {
-    }
   }
 
   public static record ConsumptionHorizon(
-    int originalArrivalTime,
-    int timeStamp,
+    long originalArrivalTime,
+    long timeStamp,
     String clientMessageId) {
 
-    @JsonbCreator
-    public ConsumptionHorizon   {
-    }
   }
 
   public static record RetentionHorizon() {
 
-    @JsonbCreator
-    public RetentionHorizon {
-    }
   }
 
   public static record RetentionHorizonV2() {
 
-    @JsonbCreator
-    public RetentionHorizonV2 {
-    }
   }
 
   public static record FileSettings(
     String filesRelativePath,
     String documentLibraryId,
-    String sharepointRootLibrary) {
+    String sharepolongRootLibrary) {
 
-    @JsonbCreator
-    public FileSettings   {
-    }
   }
 
   public static record Tab(
@@ -219,13 +171,10 @@ public class Teams {
     String directive,
     String tabType,
     float order,
-    int replyChainId,
-    Object settings //interface{}
+    long replyChainId,
+    Object settings //longerface{}
     ) {
 
-    @JsonbCreator
-    public Tab        {
-    }
   }
 
   public static record Message(
@@ -235,19 +184,16 @@ public class Teams {
     String imDisplayName,
     String id,
     String type,
-    LocalDate composeTime, //api.RFC3339Time
-    LocalDate originalArrivalTime, //api.RFC3339Time
+    OffsetDateTime composeTime, //api.RFC3339Time
+    OffsetDateTime originalArrivalTime, //api.RFC3339Time
     String containerId,
     String parentMessageId,
     String from,
-    int sequenceId,
-    int version,
+    long sequenceId,
+    long version,
     String threadType, //*String
     boolean isEscalationToNewPerson) {
 
-    @JsonbCreator
-    public Message               {
-    }
   }
 
   public static record ConnectorProfile(
@@ -257,21 +203,15 @@ public class Teams {
     String connectorType,
     String id) {
 
-    @JsonbCreator
-    public ConnectorProfile     {
-    }
   }
 
   public static record ChannelSettings(
-    int channelPostPermissions,
-    int channelReplyPermissions,
-    int channelPinPostPermissions,
-    int channelConnectorsPostPermissions,
-    int channelBotsPostPermissions) {
+    long channelPostPermissions,
+    long channelReplyPermissions,
+    long channelPinPostPermissions,
+    long channelConnectorsPostPermissions,
+    long channelBotsPostPermissions) {
 
-    @JsonbCreator
-    public ChannelSettings     {
-    }
   }
 
   public static record ActiveMeetup(
@@ -280,18 +220,15 @@ public class Teams {
     String conversationId, //`json:"conversationId"`
     String groupCallInitiator, //`json:"groupCallInitiator"`
     String wasInitiatorInLobby, //`json:"wasInitiatorInLobby"`
-    LocalDate expiration, //`json:"expiration"`
+    OffsetDateTime expiration, //`json:"expiration"`
     String status, //`json:"status"`
     boolean isHostless, //`json:"isHostless"`
     String tenantId, //`json:"tenantId"`
     String organizerId, //`json:"organizerId"`
-    int callMeetingType, //`json:"callMeetingType"`
+    long callMeetingType, //`json:"callMeetingType"`
     String conversationType //`json:"conversationType"`
     ) {
 
-    @JsonbCreator
-    public ActiveMeetup            {
-    }
   }
 
   public static record Channel(
@@ -301,8 +238,8 @@ public class Teams {
     ConsumptionHorizon consumptionHorizon, //*ConsumptionHorizon
     RetentionHorizon retentionHorizon, //*RetentionHorizon
     RetentionHorizonV2 retentionHorizonV2, //*RetentionHorizonV2
-    int version,
-    int threadVersion,
+    long version,
+    long threadVersion,
     String parentTeamId,
     boolean isGeneral,
     boolean isFavorite,
@@ -319,19 +256,19 @@ public class Teams {
     boolean isDeleted,
     boolean isPinned,
     boolean isShared,
-    LocalDate lastImportantMessageTime,
-    LocalDate lastLeaveAt,
-    LocalDate lastJoinAt,
-    int memberRole,
+    OffsetDateTime lastImportantMessageTime,
+    OffsetDateTime lastLeaveAt,
+    OffsetDateTime lastJoinAt,
+    long memberRole,
     boolean isMuted,
-    int membershipExpiry,
+    long membershipExpiry,
     List<ActiveMeetup> activeMeetups,
     boolean isFavoriteByDefault,
-    LocalDate creationTime,
+    OffsetDateTime creationTime,
     boolean isArchived,
-    int channelType,
+    long channelType,
     ChannelSettings channelSettings,
-    int membershipVersion,
+    long membershipVersion,
     MembershipSummary membershipSummary, //*MembershipSummary
     TeamSettings memberSettings, //`json:"memberSettings"`
     TeamSettings guestSettings, //`json:"guestSettings"`
@@ -344,27 +281,24 @@ public class Teams {
     String tenantId //`json:"tenantId"`
     ) {
 
-    @JsonbCreator
-    public Channel                                               {
-    }
   }
 
   public static record TeamSettings(
     boolean addDisplayContent, // `json:"addDisplayContent"`
     boolean adminDeleteEnabled, // `json:"adminDeleteEnabled"`
     boolean channelMention, // `json:"channelMention"`
-    boolean createIntegration, // `json:"createIntegration"`
+    boolean createlongegration, // `json:"createlongegration"`
     boolean createTab, // `json:"createTab"`
     boolean createTopic, // `json:"createTopic"`
     boolean customMemesEnabled, // `json:"customMemesEnabled"`
     boolean deleteEnabled, // `json:"deleteEnabled"`
-    boolean deleteIntegration, // `json:"deleteIntegration"`
+    boolean deletelongegration, // `json:"deletelongegration"`
     boolean deleteTab, // `json:"deleteTab"`
     boolean deleteTopic, // `json:"deleteTopic"`
     boolean editEnabled, // `json:"editEnabled"`
-    int generalChannelPosting,// `json:"generalChannelPosting"`
+    long generalChannelPosting,// `json:"generalChannelPosting"`
     boolean giphyEnabled, // `json:"giphyEnabled"`
-    int giphyRating,// `json:"giphyRating"`
+    long giphyRating,// `json:"giphyRating"`
     boolean installApp, // `json:"installApp"`
     boolean isPrivateChannelCreationEnabled, // `json:"isPrivateChannelCreationEnabled"`
     boolean messageThreadingEnabled, // `json:"messageThreadingEnabled"`
@@ -373,61 +307,46 @@ public class Teams {
     boolean teamMemesEnabled, // `json:"teamMemesEnabled"`
     boolean teamMention, // `json:"teamMention"`
     boolean uninstallApp, // `json:"uninstallApp"`
-    boolean updateIntegration, // `json:"updateIntegration"`
+    boolean updatelongegration, // `json:"updatelongegration"`
     boolean updateTopic, // `json:"updateTopic"`
     boolean uploadCustomApp // `json:"uploadCustomApp"`
     ) {
 
-    @JsonbCreator
-    public TeamSettings                          {
-    }
   }
 
   public static record TeamStatus(
-    int exchangeTeamCreationStatus,
-    int sharePointSiteCreationStatus,
-    int teamNotebookCreationStatus,
-    int exchangeTeamDeletionStatus) {
+    long exchangeTeamCreationStatus,
+    long sharePolongSiteCreationStatus,
+    long teamNotebookCreationStatus,
+    long exchangeTeamDeletionStatus) {
 
-    @JsonbCreator
-    public TeamStatus    {
-    }
   }
 
   public static record MembershipSummary(
-    int botCount, // `json:"botCount"`
-    int mutedMembersCount, // `json:"mutedMembersCount"`
-    int totalMemberCount,
-    int adminRoleCount,
-    int userRoleCount,
-    int guestRoleCount) {
+    long botCount, // `json:"botCount"`
+    long mutedMembersCount, // `json:"mutedMembersCount"`
+    long totalMemberCount,
+    long adminRoleCount,
+    long userRoleCount,
+    long guestRoleCount) {
 
-    @JsonbCreator
-    public MembershipSummary      {
-    }
   }
 
   public static record TeamSiteInformation(
     String groupId,
-    String sharepointSiteUrl,
+    String sharepolongSiteUrl,
     String notebookId,
     boolean isOneNoteProvisioned) {
 
-    @JsonbCreator
-    public TeamSiteInformation    {
-    }
   }
 
   public static record ExtensionDefinition(
-    LocalDate updatedTime) {
+    OffsetDateTime updatedTime) {
 
-    @JsonbCreator
-    public ExtensionDefinition {
-    }
   }
 
   public static record Team(
-    int accessType,// `json:"accessType"`
+    long accessType,// `json:"accessType"`
     boolean channelOnlyMember,// `json:"channelOnlyMember"`
     List<Channels> channel,// `json:"channels"`
     String classification,// `json:"classification"`
@@ -450,26 +369,23 @@ public class Teams {
     boolean isUserMuted,// `json:"isUserMuted"`
     String lastJoinAt,// `json:"lastJoinAt"`
     boolean maximumMemberLimitExceeded,// `json:"maximumMemberLimitExceeded"`
-    int memberRole,// `json:"memberRole"`
-    int membershipExpiry,// `json:"membershipExpiry"`
+    long memberRole,// `json:"memberRole"`
+    long membershipExpiry,// `json:"membershipExpiry"`
     MembershipSummary membershipSummary,// `json:"membershipSummary"` *MembershipSummary
-    int membershipVersion,// `json:"membershipVersion"`
+    long membershipVersion,// `json:"membershipVersion"`
     String pictureETag,// `json:"pictureETag"`
     String smtpAddress,// `json:"smtpAddress"`
     TeamSettings teamGuestSettings,// `json:"teamGuestSettings"`
     TeamSettings teamSettings,// `json:"teamSettings"`
     TeamSiteInformation teamSiteInformation, // `json:"teamSiteInformation"`
     TeamStatus teamStatus,// `json:"teamStatus"`
-    int teamType,// `json:"teamType"`
+    long teamType,// `json:"teamType"`
     ExtensionDefinition extensionDefinition, // `json:"extensionDefinition"`
     String tenantId,// `json:"tenantId"`
     String threadSchemaVersion,// `json:"threadSchemaVersion,omitempty"`
     String threadVersion// `json:"threadVersion"`
     ) {
 
-    @JsonbCreator
-    public Team                                      {
-    }
   }
 
 }

@@ -11,9 +11,5 @@ public class Channels {
   public static record PinnedChannelsResponse(
     long orderVersion,
     List<String> pinChannelOrder) {
-
-    @JsonbCreator
-    public PinnedChannelsResponse  {
-    }
   }
 }

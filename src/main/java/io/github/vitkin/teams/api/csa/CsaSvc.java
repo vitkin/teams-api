@@ -9,19 +9,15 @@ import io.github.vitkin.teams.api.csa.Teams.Channel;
 import io.github.vitkin.teams.api.csa.Teams.ConversationResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
-import java.util.ArrayList;
 import java.util.List;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
-import javax.json.bind.config.PropertyVisibilityStrategy;
 
 /**
  *
@@ -186,7 +182,7 @@ public class CsaSvc {
    * @return @throws IOException
    * @throws InterruptedException
    */
-  public ArrayList<String> getPinnedChannels() throws IOException, InterruptedException {
+  public List<String> getPinnedChannels() throws IOException, InterruptedException {
 
     var endpointUrl = getEndpoint(ENDPOINT_CHAT_SVG_AGG, "/teams/users/me/pinnedChannels");
 
@@ -197,26 +193,10 @@ public class CsaSvc {
     System.out.println(resp.statusCode());
     System.out.println(resp.body());
 
-    var visibilityStrategy = new PropertyVisibilityStrategy() {
-      @Override
-      public boolean isVisible(Field field) {
-        return true;
-      }
-
-      @Override
-      public boolean isVisible(Method method) {
-        return false;
-      }
-    };
-
-    var jsonb = JsonbBuilder.create(
-      new JsonbConfig()
-        .withFormatting(false)
-        .withPropertyVisibilityStrategy(visibilityStrategy)
-    );
+    var jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(false));
 
     var msgResponse = jsonb.fromJson(resp.body(), PinnedChannelsResponse.class);
 
-    return null;//msgResponse.pinChannelOrder();
+    return msgResponse.pinChannelOrder();
   }
 }

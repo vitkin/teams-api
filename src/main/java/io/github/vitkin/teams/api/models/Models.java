@@ -1,7 +1,6 @@
 package io.github.vitkin.teams.api.models;
 
 import java.util.List;
-import javax.json.bind.annotation.JsonbCreator;
 
 /**
  *
@@ -13,17 +12,11 @@ public class Models {
     String type //`json:"type"`
     ) {
 
-    @JsonbCreator
-    public UserResponse  {
-    }
   }
 
   public static record SkypeTeamsInfo(
     boolean isSkypeTeamsUser) {
 
-    @JsonbCreator
-    public SkypeTeamsInfo {
-    }
   }
 
   public static record FeatureSettings(
@@ -32,9 +25,6 @@ public class Models {
     String coExistenceMode,
     boolean enableScheduleOwnerPermissions) {
 
-    @JsonbCreator
-    public FeatureSettings    {
-    }
   }
 
   public static record Phone(
@@ -42,9 +32,6 @@ public class Models {
     String number //`json:"number"`
     ) {
 
-    @JsonbCreator
-    public Phone  {
-    }
   }
 
   public static record User(
@@ -80,9 +67,6 @@ public class Models {
     String userType //`json:"userType,omitempty"`
     ) {
 
-    @JsonbCreator
-    public User                              {
-    }
   }
 
   public static record Tenant(
@@ -95,8 +79,5 @@ public class Models {
     String tenantType //`json:"tenantType"`
     ) {
 
-    @JsonbCreator
-    public Tenant       {
-    }
   }
 }

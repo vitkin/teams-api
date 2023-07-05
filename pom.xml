@@ -54,13 +54,14 @@
       <version>1.2.21</version>
     </dependency> 
     
+    <!--    
     <dependency>
       <groupId>org.eclipse</groupId>
       <artifactId>yasson</artifactId>
       <version>1.0.6</version>
       <scope>test</scope>
     </dependency>
-
+    -->
   </dependencies>
 
   <properties>
