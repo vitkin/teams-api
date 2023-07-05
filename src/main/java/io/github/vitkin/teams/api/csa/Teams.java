@@ -134,11 +134,11 @@ public class Teams {
   }
 
   public static record ConversationResponse(
-    List<Chat> chats,
-    ConversationMetadata metadata,
-    List<PrivateFeed> privateFeeds,
     List<Team> teams,
-    List<User> users) {
+    List<Chat> chats,
+    List<User> users,
+    List<PrivateFeed> privateFeeds,
+    ConversationMetadata metadata) {
 
   }
 

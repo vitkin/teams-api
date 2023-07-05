@@ -12,10 +12,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.http.HttpClient;
 import java.text.ParseException;
 import java.util.List;
+import lombok.extern.log4j.Log4j2;
 
 /**
  *
  */
+@Log4j2
 public class TeamsClient {
 
   /**
@@ -29,7 +31,7 @@ public class TeamsClient {
     var client = new TeamsClient();
 
     //  var channels = client.getPinnedChannels();
-    //  System.out.println(channels);
+    //  log.info(channels);
     
     var conversations = client.getConversations();
 

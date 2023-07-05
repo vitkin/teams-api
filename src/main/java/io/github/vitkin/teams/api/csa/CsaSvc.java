@@ -18,10 +18,12 @@ import java.util.List;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
+import lombok.extern.log4j.Log4j2;
 
 /**
  *
  */
+@Log4j2
 public class CsaSvc {
 
   static final String CHAT_SVC_AGG = "https://teams.microsoft.com/api/csa/api/";
@@ -141,8 +143,8 @@ public class CsaSvc {
 
     var resp = client.send(req, BodyHandlers.ofString());
 
-    System.out.println(resp.statusCode());
-    System.out.println(resp.body());
+    log.info(resp::statusCode);
+    log.info(resp::body);
 
     Jsonb jsonb = JsonbBuilder.create();
 
@@ -167,8 +169,8 @@ public class CsaSvc {
 
     var resp = client.send(req, BodyHandlers.ofString());
 
-    System.out.println(resp.statusCode());
-    System.out.println(resp.body());
+    log.info(resp::statusCode);
+    log.info(resp::body);
 
     Jsonb jsonb = JsonbBuilder.create();
 
@@ -190,8 +192,8 @@ public class CsaSvc {
 
     var resp = client.send(req, BodyHandlers.ofString());
 
-    System.out.println(resp.statusCode());
-    System.out.println(resp.body());
+    log.info(resp::statusCode);
+    log.info(resp::body);
 
     var jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(false));
 

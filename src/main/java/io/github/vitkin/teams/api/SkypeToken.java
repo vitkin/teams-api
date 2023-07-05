@@ -10,16 +10,17 @@ import java.net.http.HttpResponse.BodyHandlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import com.nimbusds.jwt.JWTParser;
+import lombok.extern.log4j.Log4j2;
 
 /**
  *
  */
+@Log4j2
 public class SkypeToken extends TeamsToken {
 
   /**
-   *
-   * @param tokenType
-   * @throws Exception
+   * 
+   * @throws Exception 
    */
   public SkypeToken() throws Exception {
 
@@ -42,13 +43,13 @@ public class SkypeToken extends TeamsToken {
 
     HttpResponse<String> response = authClient.send(request, BodyHandlers.ofString());
 
-    System.out.println(response.statusCode());
-    System.out.println(response.body());
+    log.info(response::statusCode);
+    log.info(response::body);
     
     ObjectMapper mapper = new ObjectMapper();
     
     Map<String,Map> map = mapper.readValue(response.body(), Map.class);
-    // System.out.println(map);
+    // log.info(map);
 
     Map<String,Object> tokens = map.get("tokens");
     

@@ -17,10 +17,12 @@ import java.text.ParseException;
 import java.util.List;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
+import lombok.extern.log4j.Log4j2;
 
 /**
  *
  */
+@Log4j2
 public class MtService {
 
   URI middleTierUrl = URI.create("https://teams.microsoft.com/api/mt/");
@@ -129,8 +131,8 @@ public class MtService {
 
     var resp = client.send(req, HttpResponse.BodyHandlers.ofString());
 
-    System.out.println(resp.statusCode());
-    System.out.println(resp.body());
+    log.info(resp::statusCode);
+    log.info(resp::body);
 
     var msgResponse = jsonb.fromJson(resp.body(), UsersResponse.class);
 
@@ -168,8 +170,8 @@ public class MtService {
 
     var resp = client.send(req, HttpResponse.BodyHandlers.ofString());
 
-    System.out.println(resp.statusCode());
-    System.out.println(resp.body());
+    log.info(resp::statusCode);
+    log.info(resp::body);
 
     Jsonb jsonb = JsonbBuilder.create();
 

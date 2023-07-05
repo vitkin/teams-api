@@ -5,10 +5,12 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.json.bind.JsonbBuilder;
 import javax.json.bind.JsonbConfig;
+import lombok.extern.log4j.Log4j2;
 
 /**
  *
  */
+@Log4j2
 public class Main {
 
   public static void main(String... args) {
@@ -36,7 +38,7 @@ public class Main {
 
     var serialized = jsonb.toJson(person);
 
-    System.out.println(serialized);
+    log.info(serialized);
 
     var json = """
       {
@@ -52,7 +54,7 @@ public class Main {
 
     var deserialized = jsonb.fromJson(json, Person.class);
 
-    System.out.println(deserialized.firstName());
+    log.info(deserialized::firstName);
 
     var j = """
             {"orderVersion":1659616855316,"pinChannelOrder":["19:5d1c8fba9fcb49fcae742c92bfeca00b@thread.tacv2","19:1c6015899783435d91667e0231b40617@thread.tacv2","19:ef8b3d7f7f964b80b936883d0d53a7da@thread.tacv2"]}
@@ -60,6 +62,6 @@ public class Main {
 
     var d = jsonb.fromJson(j, Channels.PinnedChannelsResponse.class);
 
-    System.out.println(d.orderVersion());
+    log.info(d::orderVersion);
   }
 }

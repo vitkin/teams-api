@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration  xmlns="http://logging.apache.org/log4j/2.0/config"
+                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xsi:schemaLocation="http://logging.apache.org/log4j/2.0/config
+                                    https://raw.githubusercontent.com/apache/logging-log4j2/master/log4j-core/src/main/resources/Log4j-config.xsd"
+                strict="false"
+                schema="Log4j-config.xsd"
+                status="error">
+  <Properties>
+    <Property name="defaultLayout">%d [%t] (%F:%L) %-5p - %m%n</Property>
+    <Property name="defaultLogSize">10 MB</Property>
+    <Property name="defaultRollingFiles">10</Property>
+
+    <!-- log level can be OFF, SEVERE, WARNING, INFO, FINE, FINER, FINEST, ALL -->
+    <Property name="defaultLevel">INFO</Property>
+    <Property name="basedir">logs/</Property>
+  </Properties>
+  
+  <Appenders>
+    <!-- Console -->
+    <Console  name="stderr" 
+              target="SYSTEM_ERR">
+      <PatternLayout pattern="%highlight{%date %level [%t] %logger{1.} - %msg%n%throwable}"/>
+    </Console>
+
+    <RollingFile  name="root" 
+                  fileName="${basedir}root.log" 
+                  filePattern="${basedir}root.log.%i">
+      <PatternLayout pattern="${defaultLayout}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="${defaultLogSize}"/>
+      </Policies>
+      <DefaultRolloverStrategy max="${defaultRollingFiles}"/>
+    </RollingFile>
+    
+    <RollingFile  name="api" 
+                  fileName="${basedir}api.log" 
+                  filePattern="${basedir}api.log.%i">
+      <PatternLayout pattern="${defaultLayout}"/>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="${defaultLogSize}"/>
+      </Policies>
+      <DefaultRolloverStrategy max="${defaultRollingFiles}"/>
+    </RollingFile>
+  </Appenders>
+  
+  <Loggers>
+    <Root level="${defaultLevel}">
+      <AppenderRef ref="stderr"/>
+      <AppenderRef ref="root"/>
+    </Root>
+    
+    <Logger name="io.github.vitkin.teams.api"
+            level="${defaultLevel}"
+            additivity="false">
+      <AppenderRef ref="stderr"/>
+      <AppenderRef ref="api"/>
+    </Logger>
+  </Loggers>
+</Configuration>
