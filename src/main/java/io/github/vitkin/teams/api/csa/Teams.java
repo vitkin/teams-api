@@ -1,6 +1,7 @@
 package io.github.vitkin.teams.api.csa;
 
 //import java.time.Date;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -9,14 +10,106 @@ import java.util.List;
  */
 public class Teams {
 
-  public static record User() {
+  public static record ConversationResponse(
+    List<Team> teams,
+    List<Chat> chats,
+    List<User> users,
+    List<PrivateFeed> privateFeeds,
+    ConversationMetadata metadata) {
 
   }
 
-  public static record FeedProperty(
-    String isEmptyConversation,
-    String consumptionHorizon,
-    String consumptionHorizonBookmark) {
+  public static record Team(
+    String displayName,
+    String id,
+    List<Channel> channels,
+    String pictureETag,
+    String description,
+    boolean isFavorite,
+    boolean isCollapsed,
+    boolean isDeleted,
+    boolean isTenantWide,
+    String smtpAddress,
+    String threadVersion,
+    String threadSchemaVersion,
+    String conversationVersion,
+    String classification,
+    long accessType,
+    String guestUsersCategory,
+    boolean dynamicMembership,
+    boolean maximumMemberLimitExceeded,
+    TeamSettings teamSettings,
+    TeamSettings teamGuestSettings,
+    TeamStatus teamStatus,
+    TeamSiteInformation teamSiteInformation,
+    boolean isCreator,
+    String creator,
+    long membershipVersion,
+    MembershipSummary membershipSummary,
+    boolean isUserMuted,
+    String lastJoinAt,
+    long membershipExpiry,
+    long memberRole,
+    boolean isFollowed,
+    String tenantId,
+    long teamType,
+    GroupInformation groupInformation,
+    boolean isArchived,
+    boolean isTeamLocked,
+    boolean isUnlockMembershipSyncRequired,
+    boolean channelOnlyMember,
+    long rosterVersion) {
+
+  }
+
+  public static record Chat(
+    String id,
+    ConsumptionHorizon consumptionHorizon,
+    ConsumptionHorizon userConsumptionHorizon,
+    String retentionHorizon,
+    String retentionHorizonV2,
+    List<ChatMember> members,
+    String title,
+    long version,
+    long threadVersion,
+    boolean isRead,
+    boolean isHighImportance,
+    boolean isOneOnOne,
+    Message lastMessage,
+    boolean isLastMessageFromMe,
+    long chatSubType,
+    MeetingInfo meetingInformation,
+    OffsetDateTime lastJoinAt,
+    OffsetDateTime lastLeaveAt,
+    String createdAt,
+    String creator,
+    String tenantId,
+    boolean hidden,
+    boolean isGapDetectionEnabled,
+    long interopType,
+    ActiveMeetup activeMeetup,
+    List<Tab> tabs,
+    boolean isConversationDeleted,
+    boolean isExternal,
+    boolean isMessagingDisabled,
+    String shareHistoryFromTime,
+    boolean isDisabled,
+    String importState,
+    String chatType,
+    String interopConversationStatus,
+    long conversationBlockedAt,
+    boolean hasTranscript,
+    QuickReplyAugmentation quickReplyAugmentation,
+    String templateType,
+    boolean isSticky,
+    String meetingPolicy,
+    long draftVersion,
+    long rosterVersion,
+    boolean identityMaskEnabled) {
+
+  }
+
+  public static record User() {
 
   }
 
@@ -24,7 +117,7 @@ public class Teams {
     String id,
     String type,
     long version,
-    FeedProperty properties,
+    FeedProperties properties,
     Message lastMessage,
     String messages,
     String targetLink,
@@ -34,7 +127,230 @@ public class Teams {
 
   public static record ConversationMetadata(
     String syncToken,
-    boolean isPartialData) {
+    String forwardSyncToken,
+    boolean isPartialData,
+    boolean hasMoreChats) {
+
+  }
+
+  public static record Channel(
+    String id,
+    String displayName,
+    String description,
+    ConsumptionHorizon consumptionHorizon,
+    long version,
+    long threadVersion,
+    String threadSchemaVersion,
+    String parentTeamId,
+    boolean isGeneral,
+    boolean isFavorite,
+    boolean isFollowed,
+    boolean isMember,
+    String creator,
+    boolean isMessageRead,
+    boolean isImportantMessageRead,
+    boolean isGapDetectionEnabled,
+    FileSettings defaultFileSettings,
+    List<Tab> tabs,
+    List<ConnectorProfile> connectorProfiles,
+    Message lastMessage,
+    OffsetDateTime lastImportantMessageTime,
+    boolean isDeleted,
+    boolean isPinned,
+    OffsetDateTime lastJoinAt,
+    String threadSubType,
+    OffsetDateTime lastLeaveAt,
+    long memberRole,
+    boolean isMuted,
+    long membershipExpiry,
+    boolean isFavoriteByDefault,
+    OffsetDateTime creationTime,
+    boolean isArchived,
+    long channelType,
+    TeamSettings memberSettings,
+    TeamSettings guestSettings,
+    ChannelSettings channelSettings,
+    long membershipVersion,
+    MembershipSummary membershipSummary,
+    String sharepointSiteUrl,
+    boolean isModerator,
+    String groupId,
+    boolean channelOnlyMember,
+    boolean explicitlyAdded,
+    boolean isShared,
+    ExtensionDefinition extensionDefinition) {
+
+  }
+
+  public static record ConsumptionHorizon(
+    long originalArrivalTime,
+    long timeStamp,
+    String clientMessageId) {
+
+  }
+
+  public static record FileSettings(
+    String filesRelativePath,
+    String documentLibraryId,
+    String sharepointRootLibrary) {
+
+  }
+
+  public static record Tab(
+    String id,
+    String name,
+    String definitionId,
+    String directive,
+    String tabType,
+    float order,
+    long replyChainId,
+    Settings settings) {
+
+  }
+
+  public static record Settings(
+    long wikiTabId,
+    boolean wikiDefaultTab,
+    boolean hasContent,
+    String subtype, // wiki-tab, webpage, extemsion, calendar-tab, sharepointfiles, powerpointpin, wordpin or excelpin
+    String objectId,
+    String file,
+    String name,
+    String url,
+    String removeUrl,
+    String websiteUrl,
+    String entityId,
+    String siteUrl,
+    String libraryServerRelativeUrl,
+    String libraryId,
+    String selectedDocumentLibraryTitle,
+    String selectedSiteTitle,
+    OffsetDateTime dateAdded,
+    boolean isPrivateMeetingWiki,
+    boolean meetingNotes,
+    String scenarioName) {
+
+  }
+
+  public static record ConnectorProfile(
+    String avatarUrl,
+    String displayName,
+    String incomingUrl,
+    String connectorType,
+    String id) {
+
+  }
+
+  public static record Message(
+    String messageType,
+    String content,
+    String clientMessageId,
+    String imDisplayName,
+    String id,
+    String type,
+    OffsetDateTime composeTime, //api.RFC3339Time
+    OffsetDateTime originalArrivalTime, //api.RFC3339Time
+    String containerId,
+    String parentMessageId,
+    String from,
+    long sequenceId,
+    long version,
+    String threadType,
+    boolean isEscalationToNewPerson) {
+
+  }
+
+  public static record TeamSettings(
+    boolean createTopic,
+    boolean updateTopic,
+    boolean deleteTopic,
+    boolean createTab,
+    boolean deleteTab,
+    boolean createIntegration,
+    boolean updateIntegration,
+    boolean deleteIntegration,
+    boolean giphyEnabled,
+    boolean stickersEnabled,
+    long giphyRating,
+    boolean customMemesEnabled,
+    boolean teamMemesEnabled,
+    boolean addDisplayContent,
+    boolean removeDisplayContent,
+    boolean teamMention,
+    boolean channelMention,
+    boolean adminDeleteEnabled,
+    boolean deleteEnabled,
+    boolean editEnabled,
+    boolean messageThreadingEnabled,
+    long generalChannelPosting,
+    boolean installApp,
+    boolean uninstallApp,
+    boolean isPrivateChannelCreationEnabled,
+    boolean uploadCustomApp) {
+
+  }
+
+  public static record ChannelSettings(
+    long channelPostPermissions,
+    long channelReplyPermissions,
+    long channelPinPostPermissions,
+    long channelBotsPostPermissions,
+    long channelConnectorsPostPermissions) {
+
+  }
+
+  public static record MembershipSummary(
+    long botCount,
+    long mutedMembersCount,
+    long totalMemberCount,
+    long adminRoleCount,
+    long userRoleCount,
+    long guestRoleCount) {
+
+  }
+
+  public static record RetentionHorizon() {
+
+  }
+
+  public static record RetentionHorizonV2() {
+
+  }
+
+  public static record ExtensionDefinition(
+    OffsetDateTime updatedTime,
+    String tabsEtag
+    ) {
+
+  }
+
+  public static record TeamStatus(
+    long exchangeTeamCreationStatus,
+    long sharePointSiteCreationStatus,
+    long teamNotebookCreationStatus,
+    long exchangeTeamDeletionStatus) {
+
+  }
+
+  public static record TeamSiteInformation(
+    String groupId,
+    String sharepointSiteUrl,
+    String notebookId,
+    boolean isOneNoteProvisioned) {
+
+  }
+
+  public static record GroupInformation(
+    boolean isEligibleForRenewal,
+    String expirationTime // OffsetDateTime
+    ) {
+
+  }
+
+  public static record FeedProperties(
+    String consumptionHorizon,
+    String isEmptyConversation,
+    String consumptionHorizonBookmark) {
 
   }
 
@@ -55,13 +371,13 @@ public class Teams {
   }
 
   public static record WeeklyRecurrence(
-    long longerval,
+    long interval,
     List<Long> daysOfTheWeek) {
 
   }
 
   public static record MonthlyRecurrence(
-    long longerval,
+    long interval,
     long weekOfTheMonthIndex,
     long dayOfTheWeek) {
 
@@ -84,7 +400,7 @@ public class Teams {
     boolean isCancelled,
     DateRange eventRecurrenceRange,
     RecurrencePattern eventRecurrencePattern,
-    long appolongmentType,
+    long appointmentType,
     long meetingType,
     String scenario,
     String tenantId //`json:"tenantId"`
@@ -92,300 +408,76 @@ public class Teams {
 
   }
 
-  public static record Chat(
-    long chatSubType, //`json:"chatSubType"`
-    String chatType, //`json:"chatType"`
-    ConsumptionHorizon consumptionHorizon, //`json:"consumptionHorizon"`
-    long conversationBlockedAt, //`json:"conversationBlockedAt"`
-    String createdAt, //`json:"createdAt"`
-    String creator, //`json:"creator"`
-    boolean hasTranscript, //`json:"hasTranscript"`
-    boolean hidden, //`json:"hidden"`
-    String id, //`json:"id"`
-    String longeropConversationStatus, //`json:"longeropConversationStatus"`
-    long longeropType, //`json:"longeropType"`
-    boolean isDisabled, //`json:"isDisabled"`
-    boolean isGapDetectionEnabled, //`json:"isGapDetectionEnabled"`
-    boolean isHighImportance, //`json:"isHighImportance"`
-    boolean isLastMessageFromMe, //`json:"isLastMessageFromMe"`
-    boolean isMessagingDisabled, //`json:"isMessagingDisabled"`
-    boolean isOneOnOne, //`json:"isOneOnOne"`
-    boolean isRead, //`json:"isRead"`
-    boolean isSticky, //`json:"isSticky"`
-    boolean isShared, //`json:"isShared"`
-    OffsetDateTime lastJoinAt, //`json:"lastJoinAt"`
-    OffsetDateTime lastLeaveAt, //`json:"lastLeaveAt"`
-    Message lastMessage, //`json:"lastMessage"`
-    MeetingInfo meetingInformation, //`json:"meetingInformation"`
-    String meetingPolicy, //`json:"meetingPolicy"`
-    List<ChatMember> members, //`json:"members"`
-    String retentionHorizon, //`json:"retentionHorizon"`
-    String retentionHorizonV2, //`json:"retentionHorizonV2"`
-    String shareHistoryFromTime, //`json:"shareHistoryFromTime"`
-    List<Tab> tabs, //`json:"tabs"`
-    String tenantId, //`json:"tenantId"`
-    long threadVersion, //`json:"threadVersion"`
-    String threadSchemaVersion, //`json:"threadSchemaVersion,omitempty"`
-    String title, //`json:"title"`
-    ConsumptionHorizon userConsumptionHorizon, //`json:"userConsumptionHorizon"`
-    long version//`json:"version"`
-    ) {
+  public static record ActiveMeetup(
+    String messageId,
+    String conversationURL,
+    String conversationId,
+    String groupCallInitiator,
+    boolean wasInitiatorInLobby,
+    OffsetDateTime expiration,
+    String status,
+    boolean isHostless,
+    String tenantId,
+    String organizerId,
+    long callMeetingType,
+    MeetingData meetingData,
+    String conversationType) {
 
   }
 
-  public static record ConversationResponse(
-    List<Team> teams,
-    List<Chat> chats,
-    List<User> users,
-    List<PrivateFeed> privateFeeds,
-    ConversationMetadata metadata) {
+  public static record MeetingData(
+    String meetingCode) {
 
   }
 
-  public static record ConsumptionHorizon(
-    long originalArrivalTime,
-    long timeStamp,
-    String clientMessageId) {
+  public static record QuickReplyAugmentation(
+    List<SuggestedActivity> suggestedActivities) {
 
   }
 
-  public static record RetentionHorizon() {
-
-  }
-
-  public static record RetentionHorizonV2() {
-
-  }
-
-  public static record FileSettings(
-    String filesRelativePath,
-    String documentLibraryId,
-    String sharepolongRootLibrary) {
-
-  }
-
-  public static record Tab(
-    String id,
-    String name,
-    String definitionId,
-    String directive,
-    String tabType,
-    float order,
-    long replyChainId,
-    Object settings //longerface{}
-    ) {
-
-  }
-
-  public static record Message(
-    String messageType,
-    String content,
-    String clientMessageId,
-    String imDisplayName,
-    String id,
+  public static record SuggestedActivity(
     String type,
-    OffsetDateTime composeTime, //api.RFC3339Time
-    OffsetDateTime originalArrivalTime, //api.RFC3339Time
-    String containerId,
-    String parentMessageId,
-    String from,
-    long sequenceId,
-    long version,
-    String threadType, //*String
-    boolean isEscalationToNewPerson) {
+    // List<SuggestedAction> suggestedActions,
+    String id,
+    OffsetDateTime timestamp,
+    From from,
+    Conversation conversation,
+    String replyToId) {
 
   }
 
-  public static record ConnectorProfile(
-    String avatarUrl,
-    String displayName,
-    String incomingUrl, // *String
-    String connectorType,
+  public static record SuggestedAction(
+    List<Action> actions
+       ) {
+
+  }
+
+  public static record Action(
+    String type,
+    String title,
+    String value,
+    ChannelData channelData) {
+
+  }
+
+  public static record ChannelData(
+    String type,
+    String device,
+    String id,
+    OffsetDateTime utcTime,
+    String targetMessageId) {
+
+  }
+
+  public static record From(
+    String id,
+    String name) {
+
+  }
+
+  public static record Conversation(
+    boolean isGroup,
     String id) {
 
   }
-
-  public static record ChannelSettings(
-    long channelPostPermissions,
-    long channelReplyPermissions,
-    long channelPinPostPermissions,
-    long channelConnectorsPostPermissions,
-    long channelBotsPostPermissions) {
-
-  }
-
-  public static record ActiveMeetup(
-    String messageId,
-    String conversationURL, //`json:"conversationUrl"`
-    String conversationId, //`json:"conversationId"`
-    String groupCallInitiator, //`json:"groupCallInitiator"`
-    String wasInitiatorInLobby, //`json:"wasInitiatorInLobby"`
-    OffsetDateTime expiration, //`json:"expiration"`
-    String status, //`json:"status"`
-    boolean isHostless, //`json:"isHostless"`
-    String tenantId, //`json:"tenantId"`
-    String organizerId, //`json:"organizerId"`
-    long callMeetingType, //`json:"callMeetingType"`
-    String conversationType //`json:"conversationType"`
-    ) {
-
-  }
-
-  public static record Channel(
-    String id,
-    String displayName,
-    String description,
-    ConsumptionHorizon consumptionHorizon, //*ConsumptionHorizon
-    RetentionHorizon retentionHorizon, //*RetentionHorizon
-    RetentionHorizonV2 retentionHorizonV2, //*RetentionHorizonV2
-    long version,
-    long threadVersion,
-    String parentTeamId,
-    boolean isGeneral,
-    boolean isFavorite,
-    boolean isFollowed,
-    boolean isMember,
-    String creator,
-    boolean isMessageRead,
-    boolean isImportantMessageRead,
-    boolean isGapDetectionEnabled,
-    FileSettings defaultFileSettings,
-    List<Tab> tabs,
-    Message lastMessage,
-    List<ConnectorProfile> connectorProfiles,
-    boolean isDeleted,
-    boolean isPinned,
-    boolean isShared,
-    OffsetDateTime lastImportantMessageTime,
-    OffsetDateTime lastLeaveAt,
-    OffsetDateTime lastJoinAt,
-    long memberRole,
-    boolean isMuted,
-    long membershipExpiry,
-    List<ActiveMeetup> activeMeetups,
-    boolean isFavoriteByDefault,
-    OffsetDateTime creationTime,
-    boolean isArchived,
-    long channelType,
-    ChannelSettings channelSettings,
-    long membershipVersion,
-    MembershipSummary membershipSummary, //*MembershipSummary
-    TeamSettings memberSettings, //`json:"memberSettings"`
-    TeamSettings guestSettings, //`json:"guestSettings"`
-    boolean isModerator,
-    String groupId,
-    boolean channelOnlyMember,
-    boolean explicitlyAdded,
-    String threadSchemaVersion, //`json:"threadSchemaVersion,omitempty"`
-    ConsumptionHorizon userConsumptionHorizon,
-    String tenantId //`json:"tenantId"`
-    ) {
-
-  }
-
-  public static record TeamSettings(
-    boolean addDisplayContent, // `json:"addDisplayContent"`
-    boolean adminDeleteEnabled, // `json:"adminDeleteEnabled"`
-    boolean channelMention, // `json:"channelMention"`
-    boolean createlongegration, // `json:"createlongegration"`
-    boolean createTab, // `json:"createTab"`
-    boolean createTopic, // `json:"createTopic"`
-    boolean customMemesEnabled, // `json:"customMemesEnabled"`
-    boolean deleteEnabled, // `json:"deleteEnabled"`
-    boolean deletelongegration, // `json:"deletelongegration"`
-    boolean deleteTab, // `json:"deleteTab"`
-    boolean deleteTopic, // `json:"deleteTopic"`
-    boolean editEnabled, // `json:"editEnabled"`
-    long generalChannelPosting,// `json:"generalChannelPosting"`
-    boolean giphyEnabled, // `json:"giphyEnabled"`
-    long giphyRating,// `json:"giphyRating"`
-    boolean installApp, // `json:"installApp"`
-    boolean isPrivateChannelCreationEnabled, // `json:"isPrivateChannelCreationEnabled"`
-    boolean messageThreadingEnabled, // `json:"messageThreadingEnabled"`
-    boolean removeDisplayContent, // `json:"removeDisplayContent"`
-    boolean stickersEnabled, // `json:"stickersEnabled"`
-    boolean teamMemesEnabled, // `json:"teamMemesEnabled"`
-    boolean teamMention, // `json:"teamMention"`
-    boolean uninstallApp, // `json:"uninstallApp"`
-    boolean updatelongegration, // `json:"updatelongegration"`
-    boolean updateTopic, // `json:"updateTopic"`
-    boolean uploadCustomApp // `json:"uploadCustomApp"`
-    ) {
-
-  }
-
-  public static record TeamStatus(
-    long exchangeTeamCreationStatus,
-    long sharePolongSiteCreationStatus,
-    long teamNotebookCreationStatus,
-    long exchangeTeamDeletionStatus) {
-
-  }
-
-  public static record MembershipSummary(
-    long botCount, // `json:"botCount"`
-    long mutedMembersCount, // `json:"mutedMembersCount"`
-    long totalMemberCount,
-    long adminRoleCount,
-    long userRoleCount,
-    long guestRoleCount) {
-
-  }
-
-  public static record TeamSiteInformation(
-    String groupId,
-    String sharepolongSiteUrl,
-    String notebookId,
-    boolean isOneNoteProvisioned) {
-
-  }
-
-  public static record ExtensionDefinition(
-    OffsetDateTime updatedTime) {
-
-  }
-
-  public static record Team(
-    long accessType,// `json:"accessType"`
-    boolean channelOnlyMember,// `json:"channelOnlyMember"`
-    List<Channels> channel,// `json:"channels"`
-    String classification,// `json:"classification"`
-    String conversationVersion,// `json:"conversationVersion"`
-    String creator,// `json:"creator"`
-    String description,// `json:"description"`
-    String displayName,// `json:"displayName"`
-    boolean dynamicMembership,// `json:"dynamicMembership"`
-    String guestUsersCategory,// `json:"guestUsersCategory"`
-    String id,// `json:"id"`
-    boolean isArchived,// `json:"isArchived"`
-    boolean isCollapsed,// `json:"isCollapsed"`
-    boolean isCreator,// `json:"isCreator"`
-    boolean isDeleted,// `json:"isDeleted"`
-    boolean isFavorite,// `json:"isFavorite"`
-    boolean isFollowed,// `json:"isFollowed"`
-    boolean isTeamLocked,// `json:"isTeamLocked"`
-    boolean isTenantWide,// `json:"isTenantWide"`
-    boolean isUnlockMembershipSyncRequired,// `json:"isUnlockMembershipSyncRequired"`
-    boolean isUserMuted,// `json:"isUserMuted"`
-    String lastJoinAt,// `json:"lastJoinAt"`
-    boolean maximumMemberLimitExceeded,// `json:"maximumMemberLimitExceeded"`
-    long memberRole,// `json:"memberRole"`
-    long membershipExpiry,// `json:"membershipExpiry"`
-    MembershipSummary membershipSummary,// `json:"membershipSummary"` *MembershipSummary
-    long membershipVersion,// `json:"membershipVersion"`
-    String pictureETag,// `json:"pictureETag"`
-    String smtpAddress,// `json:"smtpAddress"`
-    TeamSettings teamGuestSettings,// `json:"teamGuestSettings"`
-    TeamSettings teamSettings,// `json:"teamSettings"`
-    TeamSiteInformation teamSiteInformation, // `json:"teamSiteInformation"`
-    TeamStatus teamStatus,// `json:"teamStatus"`
-    long teamType,// `json:"teamType"`
-    ExtensionDefinition extensionDefinition, // `json:"extensionDefinition"`
-    String tenantId,// `json:"tenantId"`
-    String threadSchemaVersion,// `json:"threadSchemaVersion,omitempty"`
-    String threadVersion// `json:"threadVersion"`
-    ) {
-
-  }
-
 }

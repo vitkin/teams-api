@@ -1,7 +1,6 @@
 package io.github.vitkin.teams.api.csa;
 
 import java.util.List;
-import javax.json.bind.annotation.JsonbCreator;
 
 /**
  *

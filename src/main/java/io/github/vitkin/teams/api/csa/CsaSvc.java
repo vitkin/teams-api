@@ -1,5 +1,6 @@
 package io.github.vitkin.teams.api.csa;
 
+import com.github.mizosoft.methanol.Methanol;
 import io.github.vitkin.teams.api.SkypeToken;
 import io.github.vitkin.teams.api.TeamsToken;
 import io.github.vitkin.teams.api.csa.Channels.PinnedChannelsResponse;
@@ -35,7 +36,7 @@ public class CsaSvc {
   URI csaSvcUrl = URI.create(CHAT_SVC_AGG);
   URI msgUrl = URI.create(MESSAGES_HOST);
 
-  HttpClient client = HttpClient.newBuilder()
+  HttpClient client = Methanol.newBuilder()
     .version(HttpClient.Version.HTTP_1_1)
     .build();
 
@@ -121,6 +122,36 @@ public class CsaSvc {
     }
 
     return builder.build();
+  }
+
+  /**
+   *
+   * @param id
+   * @return
+   * @throws UnsupportedEncodingException
+   * @throws IOException
+   * @throws InterruptedException
+   */
+  public List<ChatMessage> getMessagesById(String id) throws UnsupportedEncodingException, IOException, InterruptedException {
+
+    var endpointUrl = getEndpoint(ENDPOINT_MESSAGES, "/users/ME/conversations/" + URLEncoder.encode(id, "UTF-8") + "/messages"
+      + "?pageSize=200"
+      + "&startTime=1"
+      + "&view=" + URLEncoder.encode("msnp24Equivalent|CsupportsMessageProperties", "UTF-8")
+    );
+
+    var req = authenticatedRequest("GET", endpointUrl.toString(), null);
+
+    var resp = client.send(req, BodyHandlers.ofString());
+
+    log.info(resp::statusCode);
+    log.info(resp::body);
+
+    Jsonb jsonb = JsonbBuilder.create();
+
+    var msgResponse = jsonb.fromJson(resp.body(), MessagesResponse.class);
+
+    return msgResponse.messages();
   }
 
   /**
