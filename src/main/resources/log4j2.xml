@@ -13,29 +13,29 @@
 
     <!-- log level can be OFF, SEVERE, WARNING, INFO, FINE, FINER, FINEST, ALL -->
     <Property name="defaultLevel">INFO</Property>
-    <Property name="basedir">logs/</Property>
+    <Property name="baseDir">logs/</Property>
   </Properties>
-  
+
   <Appenders>
     <!-- Console -->
-    <Console  name="stderr" 
+    <Console  name="stderr"
               target="SYSTEM_ERR">
       <PatternLayout pattern="%highlight{%date %level [%t] %logger{1.} - %msg%n%throwable}"/>
     </Console>
 
-    <RollingFile  name="root" 
-                  fileName="${basedir}root.log" 
-                  filePattern="${basedir}root.log.%i">
+    <RollingFile  name="root"
+                  fileName="${baseDir}root.log"
+                  filePattern="${baseDir}root.log.%i">
       <PatternLayout pattern="${defaultLayout}"/>
       <Policies>
         <SizeBasedTriggeringPolicy size="${defaultLogSize}"/>
       </Policies>
       <DefaultRolloverStrategy max="${defaultRollingFiles}"/>
     </RollingFile>
-    
-    <RollingFile  name="api" 
-                  fileName="${basedir}api.log" 
-                  filePattern="${basedir}api.log.%i">
+
+    <RollingFile  name="api"
+                  fileName="${baseDir}api.log"
+                  filePattern="${baseDir}api.log.%i">
       <PatternLayout pattern="${defaultLayout}"/>
       <Policies>
         <SizeBasedTriggeringPolicy size="${defaultLogSize}"/>
@@ -43,13 +43,13 @@
       <DefaultRolloverStrategy max="${defaultRollingFiles}"/>
     </RollingFile>
   </Appenders>
-  
+
   <Loggers>
     <Root level="${defaultLevel}">
       <AppenderRef ref="stderr"/>
       <AppenderRef ref="root"/>
     </Root>
-    
+
     <Logger name="io.github.vitkin.teams.api"
             level="${defaultLevel}"
             additivity="false">

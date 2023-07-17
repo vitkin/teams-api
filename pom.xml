@@ -7,13 +7,14 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.vitkin.teams</groupId>
-  <artifactId>api</artifactId>
+  <artifactId>teams-api</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <mainClass>io.github.vitkin.teams.api.TeamsClient</mainClass>
   </properties>
 
   <dependencyManagement>
@@ -88,7 +89,145 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xml</include>
+        </includes>
+      </resource>
+    </resources>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>appassembler-maven-plugin</artifactId>
+          <version>2.1.0</version>
+          <configuration>
+            <extraJvmArguments>
+              -Duser.dir=@BASEDIR@
+              -Dlog4j.configurationFile=@BASEDIR@/etc/teams-api/log4j2.xml
+              -Dorg.apache.logging.log4j.level=INFO
+              -Dsun.net.client.defaultConnectTimeout=60000
+              -Dsun.net.client.defaultReadTimeout=30000
+            </extraJvmArguments>
+            <programs>
+              <program>
+                <id>run</id>
+                <mainClass>${mainClass}</mainClass>
+              </program>
+            </programs>
+            <binFileExtensions>
+              <unix>.sh</unix>
+            </binFileExtensions>
+            <configurationDirectory>etc/${project.name}</configurationDirectory>
+            <configurationSourceDirectory>${project.basedir}/src/main/etc</configurationSourceDirectory>
+            <includeConfigurationDirectoryInClasspath>false</includeConfigurationDirectoryInClasspath>
+            <!--<logsDirectory>var/log/${project.name}</logsDirectory>-->
+            <repositoryLayout>flat</repositoryLayout>
+            <repositoryName>lib</repositoryName>
+            <useWildcardClassPath>true</useWildcardClassPath>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
     <plugins>
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.3.0</version>
+        <executions>
+          <execution>
+            <id>enforce-maven</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireMavenVersion>
+                  <version>3.9.1</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>1.5.0</version>
+        <configuration>
+          <!--<outputDirectory>${project.build.directory}</outputDirectory>-->
+        </configuration>
+        <executions>
+          <!-- enable flattening -->
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+          <!-- ensure proper cleanup -->
+          <execution>
+            <id>flatten.clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <version>4.9.10</version>
+        <executions>
+          <execution>
+            <id>get-the-git-infos</id>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>run-main</id>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <mainClass>${mainClass}</mainClass>
+              <systemProperties>
+                <systemProperty>
+                  <key>sun.net.client.defaultConnectTimeout</key>
+                  <value>60000</value>
+                </systemProperty>
+                <systemProperty>
+                  <key>sun.net.client.defaultReadTimeout</key>
+                  <value>30000</value>
+                </systemProperty>
+                <systemProperty>
+                  <key>org.apache.logging.log4j.simplelog.StatusLogger.level</key>
+                  <value>ERROR</value><!-- TRACE for debug -->
+                </systemProperty>
+              </systemProperties>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -97,6 +236,7 @@
           <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>com.github.ekryd.sortpom</groupId>
         <artifactId>sortpom-maven-plugin</artifactId>
@@ -117,4 +257,48 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>create-distribution</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>appassembler-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>assemble</id>
+                <goals>
+                  <goal>assemble</goal>
+                </goals>
+                <configuration>
+                  <generateRepository>false</generateRepository>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.6.0</version>
+            <executions>
+              <execution>
+                <id>create-distribution</id>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <phase>package</phase>
+                <configuration>
+                  <descriptors>
+                    <descriptor>${project.basedir}/src/main/assembly/distribution.xml</descriptor>
+                  </descriptors>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

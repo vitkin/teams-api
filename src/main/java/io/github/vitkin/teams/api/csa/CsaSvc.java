@@ -369,7 +369,7 @@ public class CsaSvc {
    */
   public Teams.ConversationResponse getConversations() throws IOException, InterruptedException {
 
-    var path = Paths.get("out/conversations.json");
+    var path = Files.createDirectories(Paths.get("out")).resolve("conversations.json");
 
     final String body;
 

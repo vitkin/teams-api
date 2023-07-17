@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2
+                              http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+
+  <id>distribution</id>
+
+  <formats>
+    <format>zip</format>
+  </formats>
+
+  <includeBaseDirectory>false</includeBaseDirectory>
+
+  <fileSets>
+    <fileSet>
+      <outputDirectory>bin</outputDirectory>
+      <excludes>
+        <exclude>*.bat</exclude>
+      </excludes>
+      <fileMode>0755</fileMode>
+      <directory>${project.build.directory}/appassembler/bin</directory>
+      <lineEnding>unix</lineEnding>
+    </fileSet>
+
+    <fileSet>
+      <outputDirectory>bin</outputDirectory>
+      <includes>
+        <include>*.bat</include>
+      </includes>
+      <fileMode>0755</fileMode>
+      <directory>${project.build.directory}/appassembler/bin</directory>
+      <lineEnding>dos</lineEnding>
+    </fileSet>
+
+    <fileSet>
+      <outputDirectory>etc/${project.name}</outputDirectory>
+      <includes>
+        <include>log4j2.xml</include>
+      </includes>
+      <directory>${project.basedir}/src/main/resources</directory>
+      <lineEnding>unix</lineEnding>
+      <filtered>true</filtered>
+    </fileSet>
+
+    <fileSet>
+      <outputDirectory>etc</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <directory>${project.basedir}/src/main/etc</directory>
+      <lineEnding>unix</lineEnding>
+      <filtered>true</filtered>
+    </fileSet>
+
+    <fileSet>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>README.md</include>
+      </includes>
+      <directory>${project.basedir}</directory>
+      <lineEnding>unix</lineEnding>
+    </fileSet>
+
+    <!--
+    <fileSet>
+      <outputDirectory>lib</outputDirectory>
+      <excludes>
+        <exclude>maven-metadata-appassembler.xml</exclude>
+      </excludes>
+      <directory>${project.build.directory}/appassembler/lib</directory>
+    </fileSet>
+    -->
+  </fileSets>
+
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+    </dependencySet>
+  </dependencySets>
+</assembly>
