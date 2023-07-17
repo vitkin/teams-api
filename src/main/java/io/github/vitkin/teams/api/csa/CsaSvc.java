@@ -4,8 +4,8 @@ import com.github.mizosoft.methanol.Methanol;
 import io.github.vitkin.teams.api.SkypeToken;
 import io.github.vitkin.teams.api.TeamsToken;
 import io.github.vitkin.teams.api.csa.Channels.PinnedChannelsResponse;
-import io.github.vitkin.teams.api.csa.Messages.ChatMessage;
-import io.github.vitkin.teams.api.csa.Messages.MessagesResponse;
+import io.github.vitkin.teams.api.csa.Conversation.Message;
+import io.github.vitkin.teams.api.csa.Conversation.Response;
 import io.github.vitkin.teams.api.csa.Teams.Channel;
 import io.github.vitkin.teams.api.csa.Teams.ConversationResponse;
 import java.io.IOException;
@@ -15,6 +15,10 @@ import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
@@ -28,7 +32,9 @@ import lombok.extern.log4j.Log4j2;
 public class CsaSvc {
 
   static final String CHAT_SVC_AGG = "https://teams.microsoft.com/api/csa/api/";
-  static final String MESSAGES_HOST = "https://emea.ng.msg.teams.microsoft.com/";
+  static final String MESSAGES_HOST = "https://amer.ng.msg.teams.microsoft.com/";
+  // static final String MESSAGES_HOST = "https://emea.ng.msg.teams.microsoft.com/";
+  static final String SKYPE_ASM_API_URL = "https://us-api.asm.skype.com/v1/objects/";
   static final String ENDPOINT_CHAT_SVG_AGG = "chatsvcagg";
   static final String ENDPOINT_MESSAGES = "messages";
 
@@ -119,6 +125,8 @@ public class CsaSvc {
       builder.headers("Authorization", TeamsToken.authString(token));
     } else if (url.startsWith(MESSAGES_HOST)) {
       builder.headers("Authentication", TeamsToken.authString(skypeToken));
+    } else if (url.startsWith(SKYPE_ASM_API_URL)) {
+      builder.headers("Authorization", TeamsToken.authString(skypeToken).replace("skypetoken=", "skype_token "));
     }
 
     return builder.build();
@@ -126,32 +134,201 @@ public class CsaSvc {
 
   /**
    *
+   * @throws IOException
+   * @throws InterruptedException
+   */
+  public void getConversationsList() throws IOException, InterruptedException {
+
+    var path = Paths.get("conversations.json");
+
+    Jsonb jsonb = JsonbBuilder.create();
+
+    // See https://skpy.t.allofti.me/background/protocol/chats.html
+    var backwardLink = "users/ME/conversations";
+
+    while (backwardLink != null) {
+      var endpointUrl = backwardLink.startsWith("http") ? URI.create(backwardLink) : getEndpoint(ENDPOINT_MESSAGES, backwardLink);
+
+      var req = authenticatedRequest("GET", endpointUrl.toString(), null);
+      var resp = client.send(req, BodyHandlers.ofString());
+
+      log.debug("Request:\n{}", req);
+      log.debug("Status Code: {}", resp::statusCode);
+      log.debug("Body:\n{}", resp::body);
+
+      var body = resp.body();
+      var response = jsonb.fromJson(body, Response.class);
+
+      var metadata = response._metadata();
+
+      // var messagesFile = Files.createFile(path.resolve(metadata.lastCompleteSegmentStartTime() + "-" + metadata.lastCompleteSegmentEndTime() + ".json"));
+      var messagesFile = Files.createFile(path);
+      // var messagesFile = Files.createFile(path.resolve("messages-" + i++ + ".json"));
+      Files.writeString(messagesFile, body);
+
+      backwardLink = metadata.backwardLink();
+    }
+  }
+
+  /**
+   * TODO: Consider void return.
+   *
    * @param id
+   * @param directory
    * @return
    * @throws UnsupportedEncodingException
    * @throws IOException
    * @throws InterruptedException
    */
-  public List<ChatMessage> getMessagesById(String id) throws UnsupportedEncodingException, IOException, InterruptedException {
+  public List<Message> getConversationById(String id, String directory) throws UnsupportedEncodingException, IOException, InterruptedException {
 
-    var endpointUrl = getEndpoint(ENDPOINT_MESSAGES, "/users/ME/conversations/" + URLEncoder.encode(id, "UTF-8") + "/messages"
-      + "?pageSize=200"
-      + "&startTime=1"
-      + "&view=" + URLEncoder.encode("msnp24Equivalent|CsupportsMessageProperties", "UTF-8")
-    );
-
-    var req = authenticatedRequest("GET", endpointUrl.toString(), null);
-
-    var resp = client.send(req, BodyHandlers.ofString());
-
-    log.info(resp::statusCode);
-    log.info(resp::body);
+    final String OUTPUT_PATH = "out/conversations/" + directory + "/" + id;
+    log.info("Getting conversation {}", OUTPUT_PATH);
+    var path = Paths.get(OUTPUT_PATH);
+    Files.createDirectories(path);
 
     Jsonb jsonb = JsonbBuilder.create();
 
-    var msgResponse = jsonb.fromJson(resp.body(), MessagesResponse.class);
+    // TODO: Consider having void return.
+    ArrayList<Message> messages = new ArrayList<>();
 
-    return msgResponse.messages();
+    if (Files.exists(path.resolve("1.json")) || Files.exists(path.resolve("0.json"))) {
+      log.warn("Conversation already downloaded: {}", id);
+
+      return messages;
+    }
+
+    // See https://skpy.t.allofti.me/background/protocol/chats.html
+    // var backwardLink = "users/ME/conversations";
+    var backwardLink = "users/ME/conversations/" + URLEncoder.encode(id, "UTF-8") + "/messages"
+      + "?view=" + URLEncoder.encode("msnp24Equivalent|CsupportsMessageProperties", "UTF-8")
+      + "&pageSize=200"
+      + "&startTime=1";
+
+    // TODO: We shouldn't need an index for the AMS resources files names.
+    // int i = 1;
+    while (backwardLink != null) {
+      var endpointUrl = backwardLink.startsWith("http") ? URI.create(backwardLink) : getEndpoint(ENDPOINT_MESSAGES, backwardLink);
+
+      var req = authenticatedRequest("GET", endpointUrl.toString(), null);
+      var resp = client.send(req, BodyHandlers.ofString());
+
+      if (resp.statusCode() != 200) {
+        log.error("Failed querying:\n{}", backwardLink);
+
+        // System.exit(-1);
+        break;
+      }
+
+      log.debug("Request:\n{}", req);
+      log.debug("Status Code: {}", resp::statusCode);
+      log.debug("Body:\n{}", resp::body);
+
+      var body = resp.body();
+      var response = jsonb.fromJson(body, Response.class);
+
+      var metadata = response._metadata();
+
+      // var messagesFile = Files.createFile(path.resolve(metadata.lastCompleteSegmentStartTime() + "-" + metadata.lastCompleteSegmentEndTime() + ".json"));
+      var messagesFile = Files.createFile(path.resolve(metadata.lastCompleteSegmentStartTime() + ".json"));
+      // var messagesFile = Files.createFile(path.resolve("messages-" + i++ + ".json"));
+      Files.writeString(messagesFile, body);
+
+      backwardLink = metadata.backwardLink();
+      // backwardLink = backwardLink.replace("startTime=1", "startTime=" + metadata.lastCompleteSegmentStartTime());
+      // backwardLink = backwardLink.replace("view=msnp24Equivalent&", "view=" + URLEncoder.encode("msnp24Equivalent|CsupportsMessageProperties", "UTF-8") + "&");
+
+      var responseMessages = response.messages();
+
+      // messages.addAll(responseMessages);
+      var amsPath = Paths.get("out/conversations/" + directory + "/" + id + "/ams");
+      Files.createDirectories(amsPath);
+
+      responseMessages.forEach(message -> {
+
+        var amsReferences = message.amsreferences();
+
+        if (amsReferences != null) {
+          log.debug("Message Content:\n{}", message::content);
+
+          amsReferences.stream().forEach(ref -> {
+
+            if (ref.isBlank()) {
+              log.warn("Blank AMS reference for message {}", message::id);
+            } else {
+              // TODO: Figure out a better way to identify the AMS resource type.
+              // var requestSuffix = message.content().contains(ref + "/views/img") ? "imgpsh_fullsize?v=1" : "original";
+              if (!downloadAmsResource(amsPath, ref, "imgpsh_fullsize?v=1")) {
+                if (!downloadAmsResource(amsPath, ref, "original")) {
+                  if (!downloadAmsResource(amsPath, ref, "audio?v=1")) {
+                    if (downloadAmsResource(amsPath, ref, "thumbnail?v=1")) {
+                      // TODO: Parse content HTML.
+                      log.warn("Video must be downloaded, see below:\n{}", message.content());
+                    } else {
+                      log.error("Cannot download {} for Conversation {}", ref, message.conversationid());
+
+                      // System.exit(-2);
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+      });
+    }
+
+    // TODO: Consider having void return.
+    return messages;
+  }
+
+  /**
+   *
+   * @param amsPath
+   * @param ref
+   * @param requestSuffix
+   * @return
+   */
+  private boolean downloadAmsResource(final Path amsPath, final String ref, final String requestSuffix) {
+
+    final var request = authenticatedRequest("GET", SKYPE_ASM_API_URL + ref + "/views/" + requestSuffix, null);
+
+    Path path = null;
+
+    try {
+      path = amsPath.resolve(ref);
+
+      if (Files.exists(path)) {
+        log.warn("File {} already exists!", path);
+
+        return true;
+      } else {
+        Files.createFile(path);
+      }
+
+      final var r = client.send(request, BodyHandlers.ofFile(path));
+
+      log.debug("Request:\n{}", request);
+      log.debug("Status Code: {}", r::statusCode);
+      log.debug("Body:\n{}", r::body);
+
+      if (r.statusCode() == 200) {
+        return true;
+      }
+    } catch (IOException | InterruptedException ex) {
+      log.error(ex, ex);
+    }
+
+    if (path != null) {
+      try {
+        log.warn("Deleting file {}", path);
+        Files.deleteIfExists(path);
+      } catch (IOException ex) {
+        log.error(ex, ex);
+      }
+    }
+
+    return false;
   }
 
   /**
@@ -162,7 +339,7 @@ public class CsaSvc {
    * @throws IOException
    * @throws InterruptedException
    */
-  public List<ChatMessage> getMessagesByChannel(Channel channel) throws UnsupportedEncodingException, IOException, InterruptedException {
+  public List<Message> getConversationByChannel(Channel channel) throws UnsupportedEncodingException, IOException, InterruptedException {
 
     var endpointUrl = getEndpoint(ENDPOINT_MESSAGES, "/users/ME/conversations/" + URLEncoder.encode(channel.id(), "UTF-8") + "/messages"
       + "?view=msnp24Equivalent|supportsMessageProperties"
@@ -174,12 +351,13 @@ public class CsaSvc {
 
     var resp = client.send(req, BodyHandlers.ofString());
 
-    log.info(resp::statusCode);
-    log.info(resp::body);
+    log.debug("Request:\n{}", req);
+    log.debug("Status Code: {}", resp::statusCode);
+    log.debug("Body:\n{}", resp::body);
 
     Jsonb jsonb = JsonbBuilder.create();
 
-    var msgResponse = jsonb.fromJson(resp.body(), MessagesResponse.class);
+    var msgResponse = jsonb.fromJson(resp.body(), Response.class);
 
     return msgResponse.messages();
   }
@@ -191,21 +369,34 @@ public class CsaSvc {
    */
   public Teams.ConversationResponse getConversations() throws IOException, InterruptedException {
 
-    var endpointUrl = getEndpoint(ENDPOINT_CHAT_SVG_AGG, "/teams/users/me"
-      + "?isPrefetch=false"
-      + "&enableMembershipSummary=true"
-    );
+    var path = Paths.get("out/conversations.json");
 
-    var req = authenticatedRequest("GET", endpointUrl.toString(), null);
+    final String body;
 
-    var resp = client.send(req, BodyHandlers.ofString());
+    if (Files.exists(path)) {
+      log.warn("File {} already exists!", path);
+      body = Files.readString(path);
+    } else {
+      Files.createFile(path);
 
-    log.info(resp::statusCode);
-    log.info(resp::body);
+      var endpointUrl = getEndpoint(ENDPOINT_CHAT_SVG_AGG, "/teams/users/me"
+        + "?isPrefetch=false"
+        + "&enableMembershipSummary=true"
+      );
+
+      var req = authenticatedRequest("GET", endpointUrl.toString(), null);
+      var resp = client.send(req, BodyHandlers.ofString());
+
+      log.debug("Request:\n{}", req);
+      log.debug("Status Code: {}", resp::statusCode);
+      log.debug("Body:\n{}", resp::body);
+
+      body = resp.body();
+      Files.writeString(path, body);
+    }
 
     Jsonb jsonb = JsonbBuilder.create();
-
-    var msgResponse = jsonb.fromJson(resp.body(), ConversationResponse.class);
+    var msgResponse = jsonb.fromJson(body, ConversationResponse.class);
 
     return msgResponse;
   }
@@ -223,8 +414,9 @@ public class CsaSvc {
 
     var resp = client.send(req, BodyHandlers.ofString());
 
-    log.info(resp::statusCode);
-    log.info(resp::body);
+    log.debug("Request:\n{}", req);
+    log.debug("Status Code: {}", resp::statusCode);
+    log.debug("Body:\n{}", resp::body);
 
     var jsonb = JsonbBuilder.create(new JsonbConfig().withFormatting(false));
 

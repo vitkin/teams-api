@@ -45,13 +45,13 @@ public class SkypeToken extends TeamsToken {
 
     HttpResponse<String> response = authClient.send(request, BodyHandlers.ofString());
 
-    log.info(response::statusCode);
-    log.info(response::body);
+    log.debug(response::statusCode);
+    log.debug(response::body);
 
     ObjectMapper mapper = new ObjectMapper();
 
     Map<String, Map> map = mapper.readValue(response.body(), Map.class);
-    // log.info(map);
+    // log.debug(map);
 
     Map<String, Object> tokens = map.get("tokens");
 

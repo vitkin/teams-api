@@ -137,8 +137,8 @@ public class MtService {
 
     var resp = client.send(req, HttpResponse.BodyHandlers.ofString());
 
-    log.info(resp::statusCode);
-    log.info(resp::body);
+    log.debug(resp::statusCode);
+    log.debug(resp::body);
 
     var msgResponse = jsonb.fromJson(resp.body(), UsersResponse.class);
 
@@ -158,8 +158,8 @@ public class MtService {
 
     var resp = client.send(req, HttpResponse.BodyHandlers.ofString());
 
-    log.info(resp::statusCode);
-    log.info(resp::body);
+    log.debug(resp::statusCode);
+    log.debug(resp::body);
 
     Jsonb jsonb = JsonbBuilder.create();
 
@@ -190,8 +190,8 @@ public class MtService {
 
     var resp = client.send(req, HttpResponse.BodyHandlers.ofString());
 
-    log.info(resp::statusCode);
-    log.info(resp::body);
+    log.debug(resp::statusCode);
+    log.debug(resp::body);
 
     Jsonb jsonb = JsonbBuilder.create();
 

@@ -6,7 +6,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import io.github.vitkin.teams.api.csa.CsaSvc;
-import io.github.vitkin.teams.api.csa.Messages.ChatMessage;
+import io.github.vitkin.teams.api.csa.Conversation.Message;
 import io.github.vitkin.teams.api.csa.Teams.Channel;
 import io.github.vitkin.teams.api.csa.Teams.ConversationResponse;
 import io.github.vitkin.teams.api.models.Models.Tenant;
@@ -26,30 +26,48 @@ public class TeamsClient {
    * @throws Exception
    */
   public static void main(String... args) throws Exception {
-    
+
     // System.setProperty("https.proxyHost", "localhost");
     // System.setProperty("https.proxyPort", "8000");
-
     var client = new TeamsClient();
-    
-    // var me = client.getMe();
 
-    var pinnedChannels = client.getPinnedChannels();
-    System.out.println(pinnedChannels);
-    
     var conversations = client.getConversations();
-    System.out.println(conversations);
-    
-    // var conversation = client.getMessages(pinnedChannels.get(0));
-    // System.out.println(conversation);
+
+    conversations.chats().stream().forEach(conversation -> {
+      try {
+        client.getMessages(conversation.id(), "chats");
+      } catch (IOException | InterruptedException ex) {
+        log.error(ex, ex);
+      }
+    });
+
+    conversations.teams().forEach(team -> {
+      final var teamId = team.id();
+
+      // try {
+      //   // General, also part of the channels
+      //   client.getMessages(teamId, "teams");
+      team.channels().forEach(channel -> {
+        try {
+          client.getMessages(channel.id(), "teams/" + teamId + "/channels");
+        } catch (IOException | InterruptedException ex) {
+          log.error(ex, ex);
+        }
+      });
+      // } catch (IOException | InterruptedException ex) {
+      //   log.error(ex, ex);
+      // }
+    });
   }
 
   /**
-   *    */
+   *
+   */
   CsaSvc chatSvc;
 
   /**
-   *    */
+   *
+   */
   MtService mtSvc;
 
   /**
@@ -91,6 +109,16 @@ public class TeamsClient {
    * @return @throws IOException
    * @throws InterruptedException
    */
+  void getConversationsList() throws IOException, InterruptedException {
+
+    this.chatSvc.getConversationsList();
+  }
+
+  /**
+   *
+   * @return @throws IOException
+   * @throws InterruptedException
+   */
   ConversationResponse getConversations() throws IOException, InterruptedException {
 
     return this.chatSvc.getConversations();
@@ -98,16 +126,17 @@ public class TeamsClient {
 
   /**
    *
-   * @param channel
+   * @param id
+   * @param directory
    * @return
    * @throws IOException
    * @throws InterruptedException
    */
-  List<ChatMessage> getMessages(String id) throws IOException, InterruptedException {
+  List<Message> getMessages(String id, String directory) throws IOException, InterruptedException {
 
-    return this.chatSvc.getMessagesById(id);
+    return this.chatSvc.getConversationById(id, directory);
   }
-  
+
   /**
    *
    * @param channel
@@ -115,9 +144,9 @@ public class TeamsClient {
    * @throws IOException
    * @throws InterruptedException
    */
-  List<ChatMessage> getMessages(Channel channel) throws IOException, InterruptedException {
+  List<Message> getMessages(Channel channel) throws IOException, InterruptedException {
 
-    return this.chatSvc.getMessagesByChannel(channel);
+    return this.chatSvc.getConversationByChannel(channel);
   }
 
   /**
